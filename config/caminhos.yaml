@@ -1,0 +1,20 @@
+# Caminhos locais usados pelo pipeline. Nenhum destes caminhos entra no
+# repositório em si (nem deveria — são específicos desta máquina/usuário);
+# preencha com os caminhos reais do seu computador.
+#
+# PENDENTE (você disse que preenche depois):
+#   - pasta_exportacoes
+#   - pasta_base_drive
+
+# Pasta onde ficam as exportações mensais brutas do sistema de cadastro.
+# Usada pelo modo `--lote <pasta> --competencia AAAA-MM`, que espera uma
+# subpasta por município dentro dela, ex.:
+#   <pasta_exportacoes>/Santa Maria Madalena/MADALENA - GERAL.xlsx
+#   <pasta_exportacoes>/Saquarema/SAQUAREMA - GERAL.xlsx
+pasta_exportacoes: ""
+
+# Pasta-base do Google Drive para Desktop onde o pipeline grava as
+# listagens por equipe, em <pasta_base_drive>/<Município>/<Equipe>/<AAAA-MM>/.
+# Precisa ser uma pasta já sincronizada localmente (não usamos a API do
+# Google) — o link da pasta de cada equipe é fixo e vai em equipes.yaml.
+pasta_base_drive: ""

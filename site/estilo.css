@@ -1,0 +1,461 @@
+/* ────────────────────────────────────────────────────────────────────────
+   Painel de Qualidade do Cadastro — Prima Qualitá Saúde
+   Sistema de design: paleta extraída do logo, escala única de criticidade,
+   modo claro/escuro, acessível (contraste + info que não depende só de cor).
+   ──────────────────────────────────────────────────────────────────────── */
+
+:root {
+  color-scheme: light;
+
+  /* Identidade Prima Qualitá (extraída de assets/logo_prima.png) */
+  --cor-marca-azul: #0f7fb0;
+  --cor-marca-azul-forte: #0a5f85;
+  --cor-marca-verde: #0f7a70;
+  --cor-marca-verde-forte: #0b5c54;
+
+  /* Escala única de criticidade — usada em TODO lugar que precisa dizer
+     "bom / atenção / ruim" (score, mapas de calor, badges). Nunca usar
+     outra cor para o mesmo significado. */
+  --cor-adequada: #1e8f6f;
+  --cor-atencao: #c97a1d;
+  --cor-critica: #c23b3b;
+  --cor-adequada-fundo: #e6f4ef;
+  --cor-atencao-fundo: #fbf0e2;
+  --cor-critica-fundo: #fbe9e9;
+
+  /* Neutros */
+  --fundo: #f7f8fa;
+  --fundo-cartao: #ffffff;
+  --fundo-alt: #eef1f4;
+  --borda: #dde2e8;
+  --texto: #1c2430;
+  --texto-suave: #5b6472;
+  --texto-fraco: #8791a0;
+  --sombra: 0 1px 2px rgba(20, 30, 45, 0.06), 0 4px 12px rgba(20, 30, 45, 0.06);
+
+  --fonte: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --raio: 12px;
+
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --cor-marca-azul: #4db8e8;
+    --cor-marca-azul-forte: #7ecdf0;
+    --cor-marca-verde: #3ecbb9;
+    --cor-marca-verde-forte: #6fdcce;
+
+    --cor-adequada: #3dbe94;
+    --cor-atencao: #e0973d;
+    --cor-critica: #e56767;
+    --cor-adequada-fundo: #16332a;
+    --cor-atencao-fundo: #3a2c18;
+    --cor-critica-fundo: #3a2020;
+
+    --fundo: #12161c;
+    --fundo-cartao: #1a2029;
+    --fundo-alt: #202834;
+    --borda: #2c3542;
+    --texto: #e8ecf1;
+    --texto-suave: #aab3c0;
+    --texto-fraco: #7a8493;
+    --sombra: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.35);
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --cor-marca-azul: #4db8e8;
+  --cor-marca-azul-forte: #7ecdf0;
+  --cor-marca-verde: #3ecbb9;
+  --cor-marca-verde-forte: #6fdcce;
+
+  --cor-adequada: #3dbe94;
+  --cor-atencao: #e0973d;
+  --cor-critica: #e56767;
+  --cor-adequada-fundo: #16332a;
+  --cor-atencao-fundo: #3a2c18;
+  --cor-critica-fundo: #3a2020;
+
+  --fundo: #12161c;
+  --fundo-cartao: #1a2029;
+  --fundo-alt: #202834;
+  --borda: #2c3542;
+  --texto: #e8ecf1;
+  --texto-suave: #aab3c0;
+  --texto-fraco: #7a8493;
+  --sombra: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.35);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  background: var(--fundo);
+  color: var(--texto);
+  font-family: var(--fonte);
+  font-size: 15px;
+  line-height: 1.45;
+  overflow-x: hidden;
+}
+
+img { max-width: 100%; }
+[hidden] { display: none !important; }
+
+a { color: var(--cor-marca-azul-forte); }
+
+button, select {
+  font: inherit;
+  color: inherit;
+}
+
+/* ── Layout ────────────────────────────────────────────────────────── */
+.pagina {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 16px 48px;
+}
+
+.cabecalho {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 10px 16px;
+  background: var(--fundo-cartao);
+  border-bottom: 1px solid var(--borda);
+}
+
+.cabecalho__marca {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  color: var(--texto);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.cabecalho__marca img { height: 26px; }
+
+.cabecalho__nav {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.cabecalho__nav a {
+  padding: 6px 10px;
+  border-radius: 8px;
+  color: var(--texto-suave);
+  text-decoration: none;
+  font-size: 13.5px;
+  font-weight: 600;
+}
+.cabecalho__nav a:hover, .cabecalho__nav a[aria-current="page"] {
+  background: var(--fundo-alt);
+  color: var(--texto);
+}
+
+.cabecalho__controles {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.seletor {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--borda);
+  background: var(--fundo-cartao);
+  color: var(--texto);
+  font-size: 13.5px;
+}
+
+.botao-tema {
+  border: 1px solid var(--borda);
+  background: var(--fundo-cartao);
+  border-radius: 8px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.migalha {
+  font-size: 13px;
+  color: var(--texto-fraco);
+  margin: 16px 0 4px;
+}
+.migalha a { color: var(--texto-suave); text-decoration: none; }
+.migalha a:hover { text-decoration: underline; }
+
+h1.titulo-pagina {
+  font-size: 22px;
+  margin: 4px 0 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+h1.titulo-pagina img.brasao { height: 32px; border-radius: 4px; }
+
+.grade {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.cartao {
+  background: var(--fundo-cartao);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+  padding: 16px 18px;
+  box-shadow: var(--sombra);
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.cartao--largo { grid-column: 1 / -1; }
+
+.cartao__cabecalho {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.cartao__titulo {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--texto-suave);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ajuda {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--fundo-alt);
+  color: var(--texto-fraco);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: help;
+  border: none;
+  position: relative;
+}
+.ajuda[data-aberto]::after {
+  content: attr(aria-label);
+  position: absolute;
+  bottom: 130%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: 240px;
+  background: var(--texto);
+  color: var(--fundo);
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: normal;
+  line-height: 1.35;
+  z-index: 30;
+  box-shadow: var(--sombra);
+}
+
+/* ── Estatística grande (score, %, contadores) ───────────────────────── */
+.stat-valor {
+  font-size: 34px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+.stat-legenda {
+  color: var(--texto-suave);
+  font-size: 13px;
+  margin-top: 6px;
+}
+.stat-variacao {
+  font-size: 13px;
+  font-weight: 700;
+  margin-top: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.stat-variacao--boa { color: var(--cor-adequada); }
+.stat-variacao--ruim { color: var(--cor-critica); }
+.stat-variacao--neutra { color: var(--texto-fraco); }
+
+/* ── Selo de criticidade e dado incompleto ───────────────────────────── */
+.selo {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.selo::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.selo--adequada { color: var(--cor-adequada); background: var(--cor-adequada-fundo); }
+.selo--atencao { color: var(--cor-atencao); background: var(--cor-atencao-fundo); }
+.selo--critica { color: var(--cor-critica); background: var(--cor-critica-fundo); }
+.selo--incompleto {
+  color: var(--texto-suave);
+  background: var(--fundo-alt);
+}
+.selo--incompleto::before { background: var(--texto-fraco); }
+
+/* ── Tabelas de ranking ───────────────────────────────────────────────── */
+table.tabela {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+table.tabela th {
+  text-align: left;
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--texto-fraco);
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--borda);
+  white-space: nowrap;
+}
+table.tabela td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--borda);
+  vertical-align: middle;
+}
+table.tabela tr:last-child td { border-bottom: none; }
+table.tabela tr:hover td { background: var(--fundo-alt); }
+table.tabela td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+table.tabela a.linha-equipe { color: var(--texto); text-decoration: none; font-weight: 600; }
+table.tabela a.linha-equipe:hover { text-decoration: underline; }
+
+/* ── Gráficos SVG (feitos à mão) ──────────────────────────────────────── */
+/* min-width evita que o texto do SVG fique ilegível num celular estreito —
+   melhor rolar horizontalmente dentro do cartão (que já tem overflow-x:
+   auto) do que encolher os rótulos a ponto de não dar para ler. */
+.grafico { width: 100%; min-width: 480px; height: auto; overflow: visible; }
+.grafico text { font-family: var(--fonte); fill: var(--texto-suave); }
+.grafico .eixo { stroke: var(--borda); stroke-width: 1; }
+.grafico .meta { stroke: var(--texto-fraco); stroke-width: 1.5; stroke-dasharray: 4 3; }
+.grafico .meta-rotulo { fill: var(--texto-fraco); font-size: 10.5px; font-weight: 700; }
+.grafico .rotulo-direto { font-size: 11px; font-weight: 700; fill: var(--texto); }
+.grafico .rotulo-eixo { font-size: 11px; fill: var(--texto-fraco); }
+.grafico .ponto { cursor: pointer; }
+.grafico .linha-serie { fill: none; stroke-width: 2.5; }
+.grafico .linha-projecao { fill: none; stroke-width: 2; stroke-dasharray: 5 4; }
+
+.fill-adequada { fill: var(--cor-adequada); }
+.fill-atencao { fill: var(--cor-atencao); }
+.fill-critica { fill: var(--cor-critica); }
+.fill-neutro { fill: var(--fundo-alt); }
+.stroke-adequada { stroke: var(--cor-adequada); }
+.stroke-atencao { stroke: var(--cor-atencao); }
+.stroke-critica { stroke: var(--cor-critica); }
+
+/* Mesma paleta que .fill-*, mas para elementos HTML comuns (fill só vale
+   para SVG) — usado no waffle de cadastros limpos. */
+.bg-adequada { background: var(--cor-adequada); }
+.bg-neutro { background: var(--fundo-alt); }
+
+.celula-mapa-calor { stroke: var(--fundo-cartao); stroke-width: 2; cursor: pointer; }
+.celula-mapa-calor__rotulo { font-size: 11px; font-weight: 700; text-anchor: middle; dominant-baseline: middle; }
+
+.tooltip-grafico {
+  position: fixed;
+  pointer-events: none;
+  background: var(--texto);
+  color: var(--fundo);
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  line-height: 1.4;
+  box-shadow: var(--sombra);
+  z-index: 50;
+  max-width: 240px;
+  transform: translate(-50%, -100%);
+}
+
+.legenda-cores {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: var(--texto-suave);
+  margin-top: 8px;
+}
+.legenda-cores span { display: inline-flex; align-items: center; gap: 5px; }
+.legenda-cores i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+
+/* ── Waffle ───────────────────────────────────────────────────────────── */
+.waffle-grade { display: grid; grid-template-columns: repeat(10, 1fr); gap: 3px; max-width: 220px; }
+.waffle-quad { aspect-ratio: 1; border-radius: 2px; }
+
+/* ── Utilidades ───────────────────────────────────────────────────────── */
+.texto-suave { color: var(--texto-suave); }
+.texto-fraco { color: var(--texto-fraco); font-size: 12.5px; }
+.rodape {
+  text-align: center;
+  color: var(--texto-fraco);
+  font-size: 12.5px;
+  margin-top: 40px;
+  padding-top: 16px;
+  border-top: 1px solid var(--borda);
+}
+
+.botao-grande {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 22px;
+  border-radius: var(--raio);
+  background: var(--cor-marca-azul-forte);
+  color: #fff;
+  font-weight: 700;
+  font-size: 15px;
+  text-decoration: none;
+  box-shadow: var(--sombra);
+}
+.botao-grande:hover { background: var(--cor-marca-verde-forte); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .anima-entrada { animation: entrar 0.35s ease-out both; }
+  @keyframes entrar {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: none; }
+  }
+}
+
+@media (max-width: 640px) {
+  .pagina { padding: 0 12px 40px; }
+  .stat-valor { font-size: 28px; }
+  .cabecalho__nav { order: 3; width: 100%; }
+}

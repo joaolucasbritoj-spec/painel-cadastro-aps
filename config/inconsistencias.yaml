@@ -1,0 +1,185 @@
+# Catálogo de inconsistências de cadastro. Esta é a ÚNICA fonte de regra de
+# negócio do painel: para tirar uma inconsistência resolvida ou acrescentar
+# uma nova, edite este arquivo e rode o pipeline — nenhum código muda.
+#
+# Campos de cada entrada:
+#   id              -> identificador estável, usado em data/historico.csv (coluna indicador_id).
+#                      NUNCA renomeie um id já usado no histórico; crie um novo e desative o antigo.
+#   nome            -> nome exibido no painel.
+#   descricao_curta -> 1 frase, usada em tooltips/ajuda contextual.
+#   regra           -> como marcar cada cadastro como inconsistente. Tipos:
+#       funcao        -> aplica uma função do gerar_relatorio.py (is_blank, is_blank_cpf)
+#                        sobre `coluna`.
+#       comparacao    -> compara `coluna` com `operador` e `valor`/`referencia`.
+#       colunas_iguais-> verdadeiro quando coluna_a == coluna_b (comparando a data).
+#       ou            -> verdadeiro se QUALQUER uma das `condicoes` (mesma sintaxe
+#                        recursiva) for verdadeira; usado para compor regras com dois casos.
+#       especial      -> não dá para expressar em coluna+condição simples; chama uma
+#                        função dedicada (hoje só detectar_duplicatas, do gerar_relatorio.py).
+#   meta_pct        -> % máximo aceitável do total de cadastrados ativos da equipe. Padrão 10.
+#   peso            -> peso no Score de Qualidade, caso um dia o score deixe de ser soma simples.
+#   entra_no_score  -> true = conta no Score de Qualidade e no % Inconsistência Global.
+#                      false = aparece no painel, mas não pesa no score.
+#   ativo           -> false = pipeline para de calcular e mostrar esta inconsistência
+#                      (histórico já gravado continua existindo, só não é mais atualizado).
+#   vigente_desde   -> AAAA-MM a partir de quando o indicador existe no histórico. As 7
+#                      inconsistências abaixo usam 2026-07 porque é a competência mais antiga
+#                      disponível no MAD.xlsx migrado — não é a data em que passaram a ser
+#                      rastreadas de fato, só o início dos dados que temos. Um indicador novo,
+#                      criado depois, deve usar o mês em que ele realmente entrou em vigor,
+#                      para não penalizar equipes retroativamente.
+#   listagem        -> gerar? (gera_listagem) e quais colunas do cadastro entram na planilha
+#                      por equipe (sempre reaproveitando _save_listing_xlsx).
+#   orientacao      -> 1 a 3 frases de como a equipe corrige. Texto genérico nesta versão,
+#                      porque o sistema usado NÃO é o e-SUS PEC (é um sistema terceirizado) —
+#                      ajustar a redação para os nomes de tela/menu reais do sistema de vocês
+#                      antes de publicar no painel.
+
+- id: sem_cpf
+  nome: "Sem CPF"
+  descricao_curta: "Cadastro sem CPF válido preenchido."
+  regra:
+    tipo: funcao
+    funcao: is_blank_cpf
+    coluna: cpf
+  meta_pct: 10
+  peso: 1
+  entra_no_score: true
+  ativo: true
+  vigente_desde: "2026-07"
+  listagem:
+    gerar: true
+    colunas: [equipe, micro_area, funcionario, nome, cns]
+  orientacao: >
+    Abra o cadastro do cidadão e preencha o campo de CPF, conferindo o número com um
+    documento oficial. Se o cidadão não tiver CPF, oriente a emissão gratuita pela
+    Receita Federal (app ou site "Meu CPF") ou em um posto de atendimento antes de
+    finalizar a correção.
+
+- id: sem_cns
+  nome: "Sem CNS"
+  descricao_curta: "Cadastro sem Cartão Nacional de Saúde (CNS) preenchido."
+  regra:
+    tipo: funcao
+    funcao: is_blank
+    coluna: cns
+  meta_pct: 10
+  peso: 1
+  entra_no_score: true
+  ativo: true
+  vigente_desde: "2026-07"
+  listagem:
+    gerar: true
+    colunas: [equipe, micro_area, funcionario, nome, cpf]
+  orientacao: >
+    Busque o Cartão Nacional de Saúde do cidadão pelo CPF ou pelo nome completo + data
+    de nascimento e registre o número no cadastro. Se o cidadão nunca teve CNS emitido,
+    oriente a solicitação em qualquer unidade de saúde ou pelo aplicativo Meu SUS Digital.
+
+- id: sem_endereco
+  nome: "Sem endereço"
+  descricao_curta: "Cadastro sem logradouro preenchido."
+  regra:
+    tipo: funcao
+    funcao: is_blank
+    coluna: logradouro
+  meta_pct: 10
+  peso: 1
+  entra_no_score: true
+  ativo: true
+  vigente_desde: "2026-07"
+  listagem:
+    gerar: true
+    colunas: [equipe, micro_area, funcionario, nome, cpf]
+  orientacao: >
+    Complete o logradouro, número e bairro do endereço residencial na próxima visita
+    domiciliar ou contato com o cidadão, e confira se o CEP corresponde ao endereço informado.
+
+- id: sem_vinculo_familiar
+  nome: "Não vinculado à família"
+  descricao_curta: "Cadastro sem vínculo a uma família no sistema."
+  regra:
+    tipo: comparacao
+    coluna: vinc_familia
+    operador: "=="
+    valor: "NÃO"
+  meta_pct: 10
+  peso: 1
+  entra_no_score: true
+  ativo: true
+  vigente_desde: "2026-07"
+  listagem:
+    gerar: true
+    colunas: [equipe, micro_area, funcionario, nome, cpf]
+  orientacao: >
+    Verifique se já existe um cadastro de família no mesmo endereço; se existir, vincule
+    o cidadão a ela. Se não existir, crie o cadastro familiar completo e associe o cidadão
+    como membro.
+
+- id: nunca_editado
+  nome: "Nunca editado"
+  descricao_curta: "Cadastro nunca foi revisado desde a criação (mesma data de criação e edição, ou sem data de edição registrada)."
+  regra:
+    tipo: ou
+    condicoes:
+      - id: criacao_igual_edicao
+        tipo: colunas_iguais
+        coluna_a: dt_criacao
+        coluna_b: dt_edicao
+      - id: edicao_vazia
+        tipo: funcao
+        funcao: is_blank
+        coluna: dt_edicao
+  meta_pct: 10
+  peso: 1
+  entra_no_score: true
+  ativo: true
+  vigente_desde: "2026-07"
+  listagem:
+    gerar: true
+    colunas: [equipe, micro_area, funcionario, nome, cpf, dt_criacao, dt_edicao]
+  orientacao: >
+    Abra o cadastro, confira todos os campos com o cidadão (endereço, telefone, condições
+    de saúde, vínculo familiar) e salve a edição — mesmo sem nenhuma mudança, isso registra
+    que o cadastro foi revisado.
+
+- id: possivel_duplicata
+  nome: "Possível duplicata"
+  descricao_curta: "Cadastro que aparenta ser duplicado de outro (mesmo CPF, mesmo CNS, ou nome muito similar com a mesma data de nascimento)."
+  regra:
+    tipo: especial
+    funcao: detectar_duplicatas
+  meta_pct: 10
+  peso: 1
+  entra_no_score: true
+  ativo: true
+  vigente_desde: "2026-07"
+  listagem:
+    gerar: true
+    colunas: [grupo, motivo_suspeita, equipe, micro_area, funcionario, nome, cpf, cns, nascimento, dt_criacao, dt_edicao]
+  orientacao: >
+    Abra a planilha de possíveis duplicatas da equipe, compare os cadastros do mesmo
+    grupo e, se forem a mesma pessoa, mescle-os ou inative o mais antigo/incompleto,
+    mantendo o mais atualizado. Confira o alerta de óbito/mudança de território antes
+    de excluir ou inativar qualquer um deles.
+
+- id: desatualizado
+  nome: "Desatualizado"
+  descricao_curta: "Cadastro sem edição há mais de 24 meses em relação ao fim da competência."
+  regra:
+    tipo: comparacao
+    coluna: dt_edicao
+    operador: "<"
+    referencia: ultimo_dia_competencia_menos_24_meses
+  meta_pct: 10
+  peso: 1
+  entra_no_score: false
+  ativo: true
+  vigente_desde: "2026-07"
+  listagem:
+    gerar: true
+    colunas: [equipe, micro_area, funcionario, nome, cpf, dt_edicao]
+  orientacao: >
+    Contate o cidadão (visita domiciliar, telefone ou WhatsApp) para confirmar que os
+    dados continuam corretos e registre uma edição no cadastro. Não pesa no Score de
+    Qualidade, mas indica desatualização acumulada que deve ser priorizada com o tempo.

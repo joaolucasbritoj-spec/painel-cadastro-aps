@@ -1,0 +1,44 @@
+# Cadastro de equipes. É este arquivo — e não mais o nome do arquivo
+# exportado — que diz a que município cada equipe pertence. A cada carga,
+# o pipeline confere se as equipes encontradas no export batem com as
+# equipes já cadastradas aqui para o município informado, e alerta se não
+# baterem (ex.: arquivo salvo na subpasta errada).
+#
+# Campos:
+#   municipio       -> nome completo do município (usado nas URLs e no site)
+#   ine             -> código INE da equipe (PENDENTE: preencher)
+#   nome_exportacao -> como o nome da equipe vem na coluna "equipe" do export
+#                      (comparação feita em maiúsculas, sem acento estrito)
+#   nome_exibicao   -> nome em caixa normal, usado no painel
+#   slug            -> identificador da URL, ex.: /santa-maria-madalena/arranchadouro/
+#   link_drive      -> pasta da equipe no Google Drive (PENDENTE: preencher)
+#   link_padlet     -> página da equipe no Padlet (PENDENTE: preencher)
+#
+# Rascunho gerado a partir de MADALENA - GERAL.xlsx / MAD.xlsx (competência
+# 2026-09). Os outros 3 municípios (Arraial do Cabo, Quissamã, Saquarema)
+# entram aqui quando as exportações deles chegarem — não inventei equipes
+# para eles.
+
+- municipio: "Santa Maria Madalena"
+  ine: ""
+  nome_exportacao: "ARRANCHADOURO"
+  nome_exibicao: "Arranchadouro"
+  slug: "arranchadouro"
+  link_drive: ""
+  link_padlet: ""
+
+- municipio: "Santa Maria Madalena"
+  ine: ""
+  nome_exportacao: "MANOEL DE MORAES"
+  nome_exibicao: "Manoel de Moraes"
+  slug: "manoel-de-moraes"
+  link_drive: ""
+  link_padlet: ""
+
+- municipio: "Santa Maria Madalena"
+  ine: ""
+  nome_exportacao: "TRIUNFO"
+  nome_exibicao: "Triunfo"
+  slug: "triunfo"
+  link_drive: ""
+  link_padlet: ""

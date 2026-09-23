@@ -1,0 +1,45 @@
+# Grupos prioritários para os indicadores complementares (seção "Impacto em
+# grupos prioritários" da página da equipe). Cada grupo define uma regra
+# aplicada linha a linha sobre os cadastros ATIVOS da equipe.
+#
+# Tipos de regra:
+#   contem       -> coluna (texto) contém `texto` (case-insensitive), reaproveita
+#                   a mesma lógica de busca usada em cond_saude no script atual.
+#   faixa_etaria -> coluna idade_num dentro de [min, max] (max vazio = sem limite).
+
+- id: hipertensos
+  nome: "Hipertensos"
+  regra:
+    tipo: contem
+    coluna: cond_saude
+    texto: "HIPERTENSO"
+
+- id: diabeticos
+  nome: "Diabéticos"
+  regra:
+    tipo: contem
+    coluna: cond_saude
+    texto: "DIABETES"
+
+- id: gestantes
+  nome: "Gestantes"
+  regra:
+    tipo: contem
+    coluna: cond_saude
+    texto: "GESTANTE"
+
+- id: criancas_0_2
+  nome: "Crianças de 0 a 2 anos"
+  regra:
+    tipo: faixa_etaria
+    coluna: idade_num
+    min: 0
+    max: 2
+
+- id: idosos_60_mais
+  nome: "Idosos de 60 anos ou mais"
+  regra:
+    tipo: faixa_etaria
+    coluna: idade_num
+    min: 60
+    max: null

@@ -1,0 +1,27 @@
+# ── Python ────────────────────────────────────────────────────────────────
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+
+# ── LGPD: NUNCA versionar dado nominal ou planilha bruta ────────────────────
+# Regra geral e inegociável deste projeto: nenhum arquivo com nome, CPF, CNS
+# ou dado de saúde de paciente pode entrar no repositório. Como defesa em
+# profundidade (além da verificação ativa do pipeline em `pipeline/privacidade.py`),
+# bloqueamos por extensão qualquer planilha/documento que possa conter dado
+# nominal, mesmo que alguém copie um arquivo desses para dentro do repo por engano.
+*.xlsx
+*.xls
+*.docx
+*.pdf
+
+# Pasta de saídas locais (links do Padlet, chaves pseudonimizadas da Fase 2
+# de fluxo, etc.) — nunca publicada nem versionada.
+/saida/
+
+# Exportações brutas e listagens, caso alguém as copie para dentro do repo
+# em vez de deixá-las na pasta do Drive/exportações configurada em
+# config/caminhos.yaml.
+/brutos/
+/exportacoes/

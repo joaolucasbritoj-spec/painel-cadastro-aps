@@ -1,0 +1,18 @@
+# Metas do painel de qualidade do cadastro individual.
+# Alterar aqui não exige mexer em nenhum código — o pipeline e o site
+# sempre leem estes valores.
+
+# Cada inconsistência ativa deve ficar abaixo deste percentual do total de
+# cadastrados (ativos) da equipe.
+meta_inconsistencia_pct: 10
+
+# Score de Qualidade mínimo considerado dentro da meta.
+meta_score: 80
+
+# Faixas de criticidade, aplicadas ao Score de Qualidade (score() ou
+# score_legado(), conforme o contexto). Os limites são o valor MÍNIMO de
+# cada faixa; abaixo do menor limite listado, é "Crítica".
+criticidade:
+  adequada: 80   # score >= 80
+  atencao: 65    # 65 <= score < 80
+  # score < 65 => "Crítica"

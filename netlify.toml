@@ -1,0 +1,5 @@
+# O site já vem pronto em site/ (gerado por pipeline/gerar_site.py antes do
+# commit) — não há passo de build no Netlify, só publicar essa pasta.
+[build]
+  publish = "site"
+  command = "echo 'site/ já vem pronto no repositório, nada para compilar'"

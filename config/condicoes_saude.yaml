@@ -1,0 +1,89 @@
+# Condições de saúde extraídas de CONDICOES DE SAUDE — mesmos ~20 padrões
+# (regex) já usados em gerar_relatorio.py, sem reescrever a lógica: só
+# trouxemos a mesma lista para cá, como configuração.
+#
+# Serve para duas coisas no painel:
+#   1. Mostrar a distribuição por equipe (% de cadastros com cada condição).
+#   2. Gerar um "alerta de plausibilidade": uma condição registrada em ZERO
+#      cadastros de uma equipe grande o suficiente é estatisticamente
+#      improvável e quase sempre indica que o campo não está sendo
+#      preenchido no atendimento — não que "ninguém tem". Isso vira uma
+#      pergunta no painel (ex.: "Ninguém tem Internação nos últimos 12
+#      meses registrada — confira o preenchimento?").
+#
+# Como decidir "suspeito" sem inventar uma taxa clínica esperada para cada
+# condição (não temos essa referência documentada, exceto gestantes):
+#   - Regra padrão: ZERO casos numa equipe com pelo menos
+#     `minimo_cadastros_para_alerta` cadastros ativos.
+#   - Exceção: quando a condição tem `taxa_esperada_min_pct` preenchido
+#     (hoje só gestantes, com fonte DATASUS/SINASC já usada no script
+#     atual), o alerta usa essa taxa mínima em vez de exigir zero absoluto.
+
+minimo_cadastros_para_alerta: 300
+
+condicoes:
+  - id: has
+    nome: "Hipertensão (HAS)"
+    regra: {tipo: contem, coluna: cond_saude, texto: "HIPERTENSO"}
+  - id: diabetes
+    nome: "Diabetes (DM)"
+    regra: {tipo: contem, coluna: cond_saude, texto: "DIABETES"}
+  - id: alcool
+    nome: "Uso de álcool"
+    regra: {tipo: contem, coluna: cond_saude, texto: "ALCOOL|ÁLCOOL"}
+  - id: drogas
+    nome: "Uso de drogas ilícitas"
+    regra: {tipo: contem, coluna: cond_saude, texto: "DROGA|SUBSTANC"}
+  - id: fumante
+    nome: "Fumante"
+    regra: {tipo: contem, coluna: cond_saude, texto: "FUMANTE"}
+  - id: doenca_respiratoria
+    nome: "Doença respiratória"
+    regra: {tipo: contem, coluna: cond_saude, texto: "RESPIRAT"}
+  - id: doenca_cardiaca
+    nome: "Doença cardíaca"
+    regra: {tipo: contem, coluna: cond_saude, texto: "CARD[IÍ]ACA|CARDIOVASC"}
+  - id: doenca_renal
+    nome: "Doença renal"
+    regra: {tipo: contem, coluna: cond_saude, texto: "RENAL"}
+  - id: doenca_mental
+    nome: "Doença mental"
+    regra: {tipo: contem, coluna: cond_saude, texto: "MENTAL"}
+  - id: avc
+    nome: "AVC / Derrame"
+    regra: {tipo: contem, coluna: cond_saude, texto: "AVC|DERRAME|ACIDENTE VASCULAR"}
+  - id: infarto
+    nome: "Infarto"
+    regra: {tipo: contem, coluna: cond_saude, texto: "INFARTO|IAM"}
+  - id: cancer
+    nome: "Câncer"
+    regra: {tipo: contem, coluna: cond_saude, texto: "C[AÂ]NCER"}
+  - id: hanseniase
+    nome: "Hanseníase"
+    regra: {tipo: contem, coluna: cond_saude, texto: "HANSEN"}
+  - id: tuberculose
+    nome: "Tuberculose"
+    regra: {tipo: contem, coluna: cond_saude, texto: "TUBERCULOS[EI]"}
+  - id: doenca_falciforme
+    nome: "Doença falciforme"
+    regra: {tipo: contem, coluna: cond_saude, texto: "FALCIFORME"}
+  - id: internacao_12_meses
+    nome: "Internação nos últimos 12 meses"
+    regra: {tipo: contem, coluna: cond_saude, texto: "INTERNA[CÇ][AÃ]O"}
+  - id: plantas_medicinais
+    nome: "Usa plantas medicinais"
+    regra: {tipo: contem, coluna: cond_saude, texto: "PLANTA MEDICINAL|FITOTERAP"}
+  - id: praticas_integrativas
+    nome: "Práticas integrativas e complementares"
+    regra: {tipo: contem, coluna: cond_saude, texto: "PRATICA INTEGR|PRÁTICA INTEGR|PICS"}
+  - id: acamado
+    nome: "Acamado"
+    regra: {tipo: contem, coluna: cond_saude, texto: "ACAMADO"}
+  - id: domiciliado
+    nome: "Domiciliado"
+    regra: {tipo: contem, coluna: cond_saude, texto: "DOMICILI[AO]"}
+  - id: gestante
+    nome: "Gestante"
+    regra: {tipo: contem, coluna: cond_saude, texto: "GESTANTE"}
+    taxa_esperada_min_pct: 1.0
+    taxa_esperada_nota: "Estimativa: ~1,5–2% da população total (DATASUS/SINASC)"
