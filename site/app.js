@@ -66,6 +66,21 @@
     return selo;
   }
 
+  // Título de indicador + marca "fora do score" quando entra_no_score é
+  // false (ex.: Desatualizado) — pra nunca dar a entender, num lugar que
+  // lista vários indicadores juntos, que ele pesa igual aos outros.
+  function tituloComMarcaScore(ind) {
+    var span = document.createElement('span');
+    span.appendChild(document.createTextNode(ind.titulo));
+    if (!ind.entra_no_score) {
+      var marca = document.createElement('span');
+      marca.className = 'marca-fora-score';
+      marca.textContent = 'fora do score';
+      span.appendChild(marca);
+    }
+    return span;
+  }
+
   // ══════════════════════════════════════════════════════════════════════
   //  AGREGAÇÃO — SEMPRE soma dos numeradores / soma dos denominadores,
   //  nunca média de percentuais (regra explícita do projeto). Usada tanto
@@ -745,7 +760,8 @@
     cab.className = 'cartao__cabecalho';
     var titulo = document.createElement('div');
     titulo.className = 'cartao__titulo';
-    titulo.textContent = tituloTexto;
+    if (tituloTexto instanceof Node) titulo.appendChild(tituloTexto);
+    else titulo.textContent = tituloTexto;
     if (textoAjuda) titulo.appendChild(elementoAjuda(textoAjuda));
     cab.appendChild(titulo);
     div.appendChild(cab);
@@ -1160,7 +1176,7 @@
         titulo.className = 'texto-suave';
         titulo.style.fontSize = '12.5px';
         titulo.style.fontWeight = '700';
-        titulo.textContent = ind.titulo;
+        titulo.appendChild(tituloComMarcaScore(ind));
         sub.appendChild(titulo);
 
         if (!indItem || indItem.ausente) {
@@ -1215,7 +1231,7 @@
         if (pontosSerie.every(function (p) { return p.valor === null; })) return;
 
         var proj = projetarMeta(pontosSerie, ind.meta_pct, competenciaAtual);
-        var cTraj = cartao(ind.titulo, ind.descricao_curta);
+        var cTraj = cartao(tituloComMarcaScore(ind), ind.descricao_curta);
         cTraj.className += ' cartao--largo';
         cTraj.appendChild(graficoEvolucao({
           pontos: pontosSerie, meta: ind.meta_pct,
@@ -1712,6 +1728,11 @@
       'Entre equipes ou entre meses, a soma é sempre dos numeradores e dos denominadores primeiro, e só depois se calcula o percentual — nunca a média dos percentuais de cada equipe.',
     ]));
 
+    container.appendChild(secaoTexto('% Inconsistência Global', [
+      'É uma conta DIFERENTE do Score — soma TODAS as inconsistências ativas, <strong>incluindo as marcadas "fora do score"</strong> (hoje, só "Desatualizado"), dividida pelo total de cadastrados ativos.',
+      'Por isso um indicador pode não afetar o Score de Qualidade e ainda empurrar esse percentual para cima — é assim de propósito: o Score mede o que pesa na avaliação da equipe, o % Global mede o volume total de pendência de cadastro, desatualização incluída.',
+    ]));
+
     container.appendChild(secaoTexto('Criticidade', [
       '<span class="selo selo--adequada">Adequada</span> score ≥ ' + dados.metas.criticidade.adequada + '.',
       '<span class="selo selo--atencao">Atenção</span> score ≥ ' + dados.metas.criticidade.atencao + ' e < ' + dados.metas.criticidade.adequada + '.',
@@ -1736,7 +1757,7 @@
       var tr = document.createElement('tr');
       var tdNome = document.createElement('td');
       tdNome.style.fontWeight = '700';
-      tdNome.textContent = ind.titulo;
+      tdNome.appendChild(tituloComMarcaScore(ind));
       tr.appendChild(tdNome);
       var tdDesc = document.createElement('td');
       tdDesc.className = 'texto-suave';
