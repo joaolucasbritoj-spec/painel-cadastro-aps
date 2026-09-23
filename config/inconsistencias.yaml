@@ -173,7 +173,7 @@
     referencia: ultimo_dia_competencia_menos_24_meses
   meta_pct: 10
   peso: 1
-  entra_no_score: false
+  entra_no_score: true
   ativo: true
   vigente_desde: "2026-07"
   listagem:
@@ -181,5 +181,5 @@
     colunas: [equipe, micro_area, funcionario, nome, cpf, dt_edicao]
   orientacao: >
     Contate o cidadão (visita domiciliar, telefone ou WhatsApp) para confirmar que os
-    dados continuam corretos e registre uma edição no cadastro. Não pesa no Score de
-    Qualidade, mas indica desatualização acumulada que deve ser priorizada com o tempo.
+    dados continuam corretos e registre uma edição no cadastro — isso também pesa no
+    Score de Qualidade da equipe.
